@@ -3,6 +3,7 @@ const express = require('express'); // Para crear el servidor web
 const http = require('http'); // Para crear el servidor HTTP
 const mongoose = require('mongoose'); // Para conectarse a MongoDB
 const { Server } = require('socket.io'); // Para WebSockets en tiempo real
+const cors = require('cors');
 
 // Configurar Express y el servidor HTTP
 const app = express(); // Inicia la aplicación Express
@@ -52,3 +53,7 @@ server.listen(PORT, () => {
 app.get('/', (req, res) => {
     res.send('Bienvenido al chat en tiempo real');
 });
+
+app.use(cors({
+    origin: 'https://martisio.github.io/chats/' // Reemplaza esta URL por la URL de tu GitHub Pages si es distinta
+}));
