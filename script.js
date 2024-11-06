@@ -186,12 +186,17 @@ function sendMessageFromBox(source) {
     const message = messageInput.value.trim();
     if (!message) return;
 
+    // Determina quién envía el mensaje
+    const sender = source === 'box1' ? 'Chat 1' : 'Chat 2';
+
+    // Emitir el mensaje al servidor para que lo comparta en tiempo real
+    socket.emit('newMessage', { sender, content: message });
+
+    // Mostrar el mensaje en la caja de chat correspondiente
     if (source === 'box1') {
-        // Enviar mensaje desde Caja 1 al Chat 1
         displayMessage(currentPairIndex, 'left', message, 'message-left-blue');
         addToMessageQueue(message, 'box1', currentPairIndex); // Enviar a Caja 3 para Chat 2
     } else if (source === 'box2') {
-        // Enviar mensaje desde Caja 2 al Chat 2
         displayMessage(currentPairIndex, 'right', message, 'message-left-blue');
         addToMessageQueue(message, 'box2', currentPairIndex); // Enviar a Caja 3 para Chat 1
     }
@@ -429,10 +434,14 @@ socket.on('previousMessages', (messages) => {
     messages.forEach(message => displayMessage(message.sender, message.content));
 });
 
-// Mostrar nuevos mensajes en tiempo real
+// Recibir y mostrar nuevos mensajes en tiempo real
 socket.on('newMessage', (message) => {
-    displayMessage(message.sender, message.content);
+    // Determina el lado donde mostrar el mensaje según el remitente
+    const side = message.sender === 'Chat 1' ? 'left' : 'right';
+    const styleClass = side === 'left' ? 'message-left-blue' : 'message-right-green';
+    displayMessage(currentPairIndex, side, message.content, styleClass);
 });
+
 
 // Función para enviar mensajes
 function sendMessage() {
