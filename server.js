@@ -7,8 +7,19 @@ const cors = require('cors');
 
 // Configurar Express y el servidor HTTP
 const app = express(); // Inicia la aplicación Express
+
+// Configurar CORS para permitir solicitudes desde GitHub Pages
+app.use(cors({
+    origin: 'https://martisio.github.io/chats' // Sin la barra al final
+}));
+
 const server = http.createServer(app); // Crea un servidor HTTP con Express
-const io = new Server(server); // Inicia Socket.io en el servidor
+const io = new Server(server, {
+    cors: {
+        origin: 'https://martisio.github.io/chats', // Misma URL sin barra aquí también
+        methods: ["GET", "POST"]
+    }
+});
 
 // Conectarse a MongoDB
 mongoose.connect('mongodb+srv://Martisio1:uKjIeSlhfCZbMXyT@martisio.ty68o.mongodb.net/chat?retryWrites=true&w=majority&appName=Martisio');
@@ -53,7 +64,3 @@ server.listen(PORT, () => {
 app.get('/', (req, res) => {
     res.send('Bienvenido al chat en tiempo real');
 });
-
-app.use(cors({
-    origin: 'https://martisio.github.io/chats/' // Reemplaza esta URL por la URL de tu GitHub Pages si es distinta
-}));
