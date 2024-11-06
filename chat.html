@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat en Tiempo Real</title>
+</head>
+<body>
+    <h2>Chat en Tiempo Real</h2>
+    <div id="chatBox"></div>
+
+    <input type="text" id="messageInput" placeholder="Escribe tu mensaje">
+    <button onclick="sendMessage()">Enviar</button>
+
+    <!-- Conectar a Socket.io desde el cliente -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io('https://programachats-b6a3aa94eaac.herokuapp.com'); // URL de tu servidor en Heroku
+
+        // Mostrar los mensajes antiguos cuando el usuario se conecta
+        socket.on('previousMessages', (messages) => {
+            messages.forEach(message => displayMessage(message.sender, message.content));
+        });
+
+        // Mostrar nuevos mensajes en tiempo real
+        socket.on('newMessage', (message) => {
+            displayMessage(message.sender, message.content);
+        });
+
+        // Función para enviar mensajes
+        function sendMessage() {
+            const content = document.getElementById('messageInput').value;
+            const sender = 'Usuario'; // Puedes personalizar el nombre del usuario aquí
+            socket.emit('newMessage', { sender, content });
+            displayMessage(sender, content); // Muestra el mensaje en el chat inmediatamente
+            document.getElementById('messageInput').value = ''; // Limpia el campo de entrada
+        }
+
+        // Mostrar mensaje en la página
+        function displayMessage(sender, content) {
+            const chatBox = document.getElementById('chatBox');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${sender}: ${content}`;
+            chatBox.appendChild(messageElement);
+        }
+    </script>
+</body>
+</html>
