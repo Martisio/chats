@@ -10,13 +10,13 @@ const app = express(); // Inicia la aplicación Express
 
 // Configurar CORS para permitir solicitudes desde GitHub Pages
 app.use(cors({
-    origin: 'https://martisio.github.io/chats' // Sin la barra al final
+    origin: 'https://martisio.github.io' // Sin la barra al final
 }));
 
 const server = http.createServer(app); // Crea un servidor HTTP con Express
 const io = new Server(server, {
     cors: {
-        origin: 'https://martisio.github.io/chats', // Misma URL sin barra aquí también
+        origin: 'https://martisio.github.io', // Misma URL sin barra aquí también
         methods: ["GET", "POST"]
     }
 });
