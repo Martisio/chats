@@ -420,3 +420,33 @@ function filterChatPairs() {
         }
     });
 }
+
+// Conectar a Socket.io desde el cliente
+const socket = io('https://programachats-b6a3aa94eaac.herokuapp.com'); // URL de tu servidor en Heroku
+
+// Mostrar los mensajes antiguos cuando el usuario se conecta
+socket.on('previousMessages', (messages) => {
+    messages.forEach(message => displayMessage(message.sender, message.content));
+});
+
+// Mostrar nuevos mensajes en tiempo real
+socket.on('newMessage', (message) => {
+    displayMessage(message.sender, message.content);
+});
+
+// Función para enviar mensajes
+function sendMessage() {
+    const content = document.getElementById('messageInput').value;
+    const sender = 'Usuario'; // Puedes cambiar esto para identificar al usuario
+    socket.emit('newMessage', { sender, content });
+    displayMessage(sender, content); // Muestra el mensaje en el chat inmediatamente
+    document.getElementById('messageInput').value = ''; // Limpiar la entrada de texto
+}
+
+// Mostrar mensaje en la página
+function displayMessage(sender, content) {
+    const chatBox = document.getElementById('chatBox');
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${sender}: ${content}`;
+    chatBox.appendChild(messageElement);
+}
